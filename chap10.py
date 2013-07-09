@@ -47,74 +47,31 @@ print
 # -------------------------------
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Functions related to interlocking words +++++++++++++++++++
-def is_interlockable (word1, word2):
-	'''Takes two words and checks if they are interlockable. 
-	Returns a list with the following elements:
-	[0] is False if words are more than 1 character length apart
-		(i.e. are not interlockable).
-	[1] is True if the words are the same length
-	[2] is the longer word (or the first word if they are the 
-		same length)
-	[3] if the shorther word (or the second word if they are 
-		both the same length)''' 
-	if len(word1) == len(word2):
-		return [True, True, word1, word2]
-	elif len(word1) == 1 + len(word2):
-		return [True, False, word1, word2]
-	elif len(word2) == 1 + len (word1):
-		return [True, False, word2, word1]
-	return [False, None, None, None]
+# Functions related to uninterlocking words +++++++++++++++++++
 
-def mesh(same_length,word1, word2):
-	'''Takes three arguments, word1, word2 (strings), and 
-	same_length (a boolean which indicates if both
-	words are the same length.  Returns the word that is
-	the mesh of the two string arguments.)'''
-	new_word = ''
-	for i in range (0,len(word1)-1):
-		new_word = new_word + word1[i]+ word2[i]
-	new_word = new_word + word1[-1]
-	if same_length == True:
-		new_word = new_word + word2[-1]
-	return new_word
+def unmesh_word(word):
+	'''Takes a word (longer than one character), and returns the
+	"uninterlocked" components.  Returns a list with two strings'''
+	longstr = ''
+	shortstr = ''
+	l = len(word)
+	l_long = l/2 + l%2 +1
+	l_short = l/2 + 1
 
-def perform_interlock(word1, word2):
-	'''Takes two words, checks to see if they are 
-	interlockable, and meshes them if they are. 
-	Returns a list of two meshed words, each starting
-	with a different argument.  An return item may be None, 
-	if the words are not interlockable or meshable.'''
-	locktest = is_interlockable(word1,word2)
-	lockable = locktest[0]
-	same_length = locktest [1]
-	bigger_word = locktest[2]
-	smaller_word = locktest[3]
-	if lockable == False:
-		return [None, None]
-	elif same_length == True:
-		return [mesh(same_length,bigger_word,smaller_word), 
-				mesh(same_length, smaller_word, bigger_word)]
-	else:
-		return [mesh(same_length, bigger_word, smaller_word), 
-				None]
+	for i in range(0,l_long-1):
+		longstr += word[2*i]
+	for i in range(0, l_short-1):
+		shortstr += word[2*i+1]
+	return [longstr, shortstr] 
 
-def find_baseword_interlocks(search_list, word_index, baseword):
-	'''Finds all interlockable words for a given baseword.
-	search_list: complete list, used for finding interlocks
-	word_index: smaller list to get tempword from, used to 
-				avoid duplicates.'''
-	baseword_interlocks = []
-	for tempword in word_index:
-		result = perform_interlock(baseword, tempword)
-		if result[0]!= None:
-			if in_bisect(search_list, result[0]):
-				baseword_interlocks.extend([result[0]])
-			if result[1] != None:
-				if in_bisect(search_list, result[1]):
-					baseword_interlocks.extend([result[1]])
-	return baseword_interlocks				
-# End Functions related to interlocking words ++++++++++++++++
+def are_they_words(wordlist, str1, str2):
+	'''Takes 2 strings, and returns True if they are both words.'''
+	if in_bisect(wordlist, str1):
+		if in_bisect(wordlist, str2):
+			return True
+	return False
+
+# End Functions related to uninterlocking words ++++++++++++++++
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
@@ -130,6 +87,8 @@ def make_word_list(fin):
 		word_list.append(word)
 	return word_list
 
+
+
 def in_bisect(word_list, word):
 	"""Taken from 'Think Python.'Checks whether a word is 
 	in a list using bisection search.
@@ -144,22 +103,26 @@ def in_bisect(word_list, word):
 # End Functions related to getting and searching for words +++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+def print_dict(k):
+	for c in k:
+		print c, k[c]
+
 
 # Main Program
 # ------------
-textfile = 'testwords.txt'
-fin1 = open(textfile)
-search_list = make_word_list(fin1)
-fin2 = open(textfile)
-word_index = make_word_list(fin2)
-interlocked_words = []
+textfile = 'words.txt'
+fin = open(textfile)
+wordlist = make_word_list(fin)
+interlocked_words = dict()
+count = 0
 
 print "Interlocked Words"
 print "-----------------"
-while (word_index != []):  
-	baseword = word_index[0]
-	baseword_list = find_baseword_interlocks(search_list, word_index, baseword)
-	interlocked_words.extend(baseword_list)
-	del word_index[0]
-for i in range(len(interlocked_words)):
-	print interlocked_words[i]
+for word in wordlist:
+	halfwords = unmesh_word(word)
+	if are_they_words(wordlist, halfwords[0], halfwords[1]):
+		interlocked_words[word] = [halfwords[0], halfwords[1]]
+for key in sorted(interlocked_words.iterkeys()):
+	print "%s:     %s" % (key, interlocked_words[key])
+#print_dict(interlocked_words)
+print len(interlocked_words), "interocked words"
