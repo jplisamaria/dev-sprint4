@@ -1,3 +1,6 @@
+#Dev-Sprint4, Ch. 10
+#Name: Lisa-Maria Mehta
+
 from bisect import bisect_left
 
 # *******************
