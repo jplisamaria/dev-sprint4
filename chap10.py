@@ -13,28 +13,34 @@ def is_anagram (word1, word2):
 	are anagrams of each other.'''
 	if len(word1) != len(word2):
 		return False
-	for i in range (0,len(word1)):
-		if word1[i] != word2[-1*(i+1)]:
-			return False
-	return True
+	list1 = list(word1)
+	list2 = list(word2)
+	list1.sort()
+	list2.sort()
+	if list1==list2:
+		return True
+	return False
 
 def print_results(word1, word2):
 	if is_anagram(word1, word2):
 		print word1, "and", word2, "are anagrams"
 	else:
-		print word1, "and", word2, "are not anagrams"
+		print word1, "and", word2, "are NO anagrams"
 
 
 # Main Program
 # ------------
-word1, word2, word3 = 'noon', 'noon', 'that' 
-word4, word5, word6 = 'hat', 'abcdefg', 'gfeccab'
+word1, word2 = 'nights', 'things' 
+word3, word4 = 'nose', 'eons' 
+word5, word6 = 'hat', 'cable'
+word7, word8 = 'noose','nosee'
 print
 print "Anagrams"
 print "--------"
 print_results(word1,word2)
 print_results(word3,word4)
 print_results(word5,word6)
+print_results(word7,word8)
 print
 print
 
@@ -103,10 +109,6 @@ def in_bisect(word_list, word):
 # End Functions related to getting and searching for words +++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-def print_dict(k):
-	for c in k:
-		print c, k[c]
-
 
 # Main Program
 # ------------
@@ -116,13 +118,12 @@ wordlist = make_word_list(fin)
 interlocked_words = dict()
 count = 0
 
-print "Interlocked Words"
-print "-----------------"
-for word in wordlist:
-	halfwords = unmesh_word(word)
-	if are_they_words(wordlist, halfwords[0], halfwords[1]):
-		interlocked_words[word] = [halfwords[0], halfwords[1]]
-for key in sorted(interlocked_words.iterkeys()):
-	print "%s:     %s" % (key, interlocked_words[key])
-#print_dict(interlocked_words)
-print len(interlocked_words), "interocked words"
+#print "Interlocked Words"
+#print "-----------------"
+#for word in wordlist:
+#	halfwords = unmesh_word(word)
+#	if are_they_words(wordlist, halfwords[0], halfwords[1]):
+#		interlocked_words[word] = [halfwords[0], halfwords[1]]
+#for key in sorted(interlocked_words.iterkeys()):
+#	print "%s:     %s" % (key, interlocked_words[key])
+#print len(interlocked_words), "interocked words"
